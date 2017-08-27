@@ -18,18 +18,81 @@
 
 Cjs2kbDlg::Cjs2kbDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_JS2KB_DIALOG, pParent)
+  , mL2(FALSE)
+  , mL1(FALSE)
+  , mR2(FALSE)
+  , mR1(FALSE)
+  , mR2Value(_T(""))
+  , mR1Value(_T(""))
+  , mL2Value(_T(""))
+  , mL1Value(_T(""))
+  , mYp(FALSE)
+  , mYpValue(_T(""))
+  , mYn(FALSE)
+  , mYnValue(_T(""))
+  , mXp(FALSE)
+  , mXpValue(_T(""))
+  , mXn(FALSE)
+  , mXnValue(_T(""))
+  , mB1(FALSE)
+  , mB1Value(_T(""))
+  , mB2(FALSE)
+  , mB2Value(_T(""))
+  , mB3(FALSE)
+  , mB3Value(_T(""))
+  , mB4(FALSE)
+  , mB4Value(_T(""))
+  , mStatus(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void Cjs2kbDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+  CDialogEx::DoDataExchange(pDX);
+  DDX_Check(pDX, IDC_CHECK1, mL2);
+  DDX_Check(pDX, IDC_CHECK2, mL1);
+  DDX_Check(pDX, IDC_CHECK3, mR2);
+  DDX_Check(pDX, IDC_CHECK4, mR1);
+  DDX_Text(pDX, IDC_EDIT2, mR2Value);
+  DDV_MaxChars(pDX, mR2Value, 1);
+  DDX_Text(pDX, IDC_EDIT3, mR1Value);
+  DDV_MaxChars(pDX, mR1Value, 1);
+  DDX_Text(pDX, IDC_EDIT4, mL2Value);
+  DDV_MaxChars(pDX, mL2Value, 1);
+  DDX_Text(pDX, IDC_EDIT5, mL1Value);
+  DDV_MaxChars(pDX, mL1Value, 1);
+  DDX_Check(pDX, IDC_CHECK5, mYp);
+  DDX_Text(pDX, IDC_EDIT6, mYpValue);
+  DDV_MaxChars(pDX, mYpValue, 1);
+  DDX_Check(pDX, IDC_CHECK6, mYn);
+  DDX_Text(pDX, IDC_EDIT7, mYnValue);
+  DDV_MaxChars(pDX, mYnValue, 1);
+  DDX_Check(pDX, IDC_CHECK7, mXp);
+  DDX_Text(pDX, IDC_EDIT8, mXpValue);
+  DDV_MaxChars(pDX, mXpValue, 1);
+  DDX_Check(pDX, IDC_CHECK8, mXn);
+  DDX_Text(pDX, IDC_EDIT9, mXnValue);
+  DDV_MaxChars(pDX, mXnValue, 1);
+  DDX_Check(pDX, IDC_CHECK9, mB1);
+  DDX_Text(pDX, IDC_EDIT10, mB1Value);
+  DDV_MaxChars(pDX, mB1Value, 1);
+  DDX_Check(pDX, IDC_CHECK12, mB2);
+  DDX_Text(pDX, IDC_EDIT13, mB2Value);
+  DDV_MaxChars(pDX, mB2Value, 1);
+  DDX_Check(pDX, IDC_CHECK10, mB3);
+  DDX_Text(pDX, IDC_EDIT11, mB3Value);
+  DDV_MaxChars(pDX, mB3Value, 1);
+  DDX_Check(pDX, IDC_CHECK11, mB4);
+  DDX_Text(pDX, IDC_EDIT12, mB4Value);
+  DDV_MaxChars(pDX, mB4Value, 1);
+  DDX_Text(pDX, IDC_EDIT1, mStatus);
 }
 
 BEGIN_MESSAGE_MAP(Cjs2kbDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+  ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -37,14 +100,38 @@ END_MESSAGE_MAP()
 
 BOOL Cjs2kbDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+  CDialogEx::OnInitDialog();
 
-	// 设置此对话框的图标。  当应用程序主窗口不是对话框时，框架将自动
-	//  执行此操作
-	SetIcon(m_hIcon, TRUE);			// 设置大图标
-	SetIcon(m_hIcon, FALSE);		// 设置小图标
+  // 设置此对话框的图标。  当应用程序主窗口不是对话框时，框架将自动
+  //  执行此操作
+  SetIcon(m_hIcon, TRUE);			// 设置大图标
+  SetIcon(m_hIcon, FALSE);		// 设置小图标
 
-	// TODO: 在此添加额外的初始化代码
+  // TODO: 在此添加额外的初始化代码
+
+  UpdateData(TRUE);
+  mR2Value = _T("R");
+  mR1Value = _T("F");
+  mL2Value = _T("T");
+  mL1Value = _T("G");
+  mYpValue = _T("W");
+  mYnValue = _T("S");
+  mXpValue = _T("A");
+  mXnValue = _T("D");
+  mB1Value = _T("I");
+  mB2Value = _T("L");
+  mB3Value = _T("K");
+  mB4Value = _T("J");
+  UpdateData(FALSE);
+
+  JOYCAPS mJsCaps;
+  mJsInfo.dwFlags = JOY_RETURNALL;
+  if ((joyGetNumDevs() <= 0) || (JOYERR_NOERROR != joyGetDevCaps(JOYSTICKID1, &mJsCaps, sizeof(mJsCaps))))
+  {
+    return(FALSE);
+  }
+
+  SetTimer(13, 8, 0);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -85,3 +172,70 @@ HCURSOR Cjs2kbDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+int Cjs2kbDlg::js2kbActive()
+{
+  int tKbSet = 0;
+  UpdateData(TRUE);
+  joyGetPosEx(JOYSTICKID1, &mJsInfo);
+
+  mB1 = (mJsInfo.dwButtons & 0x1) != 0x0;
+  tKbSet = mB1 ? 0 : KEYEVENTF_KEYUP;
+  keybd_event(73, 0, tKbSet, 0);
+
+  mB2 = (mJsInfo.dwButtons & 0x2) != 0x0;
+  tKbSet = mB2 ? 0 : KEYEVENTF_KEYUP;
+  keybd_event(76, 0, tKbSet, 0);
+
+  int tB3 = (mJsInfo.dwButtons & 0x4) != 0x0;
+  tKbSet = tB3 ? 0 : KEYEVENTF_KEYUP;
+  keybd_event(75, 0, tKbSet, 0);
+  mB3 = tB3;
+
+  mL2 = (mJsInfo.dwButtons & 0x40) != 0x0;
+  tKbSet = mL2 ? 0 : KEYEVENTF_KEYUP;
+  keybd_event(82, 0, tKbSet, 0);
+
+  mXp = (mJsInfo.dwXpos == 0x0);
+  tKbSet = mXp ? 0 : KEYEVENTF_KEYUP;
+  keybd_event(65, 0, tKbSet, 0);
+
+  mXn = (mJsInfo.dwXpos == 0xffff);
+  tKbSet = mXn ? 0 : KEYEVENTF_KEYUP;
+  keybd_event(68, 0, tKbSet, 0);
+
+/*
+  int tYp = (mJsInfo.dwYpos == 0x0);
+  if (mYp != tYp)
+  {
+    int tKbSet = tYp ? 0 : KEYEVENTF_KEYUP;
+    keybd_event(87, MapVirtualKey(87, 0), tKbSet, 0);
+    mYp = tYp;
+  }
+  int tYn = (mJsInfo.dwYpos == 0xffff);
+  if (mYn != tYn)
+  {
+    int tKbSet = tYn ? 0 : KEYEVENTF_KEYUP;
+    keybd_event(83, MapVirtualKey(83, 0), tKbSet, 0);
+    mYn = tYn;
+  }
+  mStatus.Format(_T("%x"), mJsInfo.dwXpos);
+*/
+  UpdateData(FALSE);
+  return(0);
+}
+
+void Cjs2kbDlg::OnTimer(UINT_PTR nIDEvent)
+{
+  // TODO: 在此添加消息处理程序代码和/或调用默认值
+
+  switch (nIDEvent)
+  {
+  case 13:
+    js2kbActive();
+    break;
+  default:
+    break;
+  }
+
+  CDialogEx::OnTimer(nIDEvent);
+}

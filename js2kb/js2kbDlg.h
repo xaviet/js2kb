@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "mmsystem.h"
+#pragma comment(lib, "winmm.lib")
 
 // Cjs2kbDlg ¶Ô»°¿ò
 class Cjs2kbDlg : public CDialogEx
@@ -30,4 +32,35 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
+
+public:
+  BOOL mL2;
+  BOOL mL1;
+  BOOL mR2;
+  BOOL mR1;
+  CString mR2Value;
+  CString mR1Value;
+  CString mL2Value;
+  CString mL1Value;
+  BOOL mYp;
+  CString mYpValue;
+  BOOL mYn;
+  CString mYnValue;
+  BOOL mXp;
+  CString mXpValue;
+  BOOL mXn;
+  CString mXnValue;
+  BOOL mB1;
+  CString mB1Value;
+  BOOL mB2;
+  CString mB2Value;
+  BOOL mB3;
+  CString mB3Value;
+  BOOL mB4;
+  CString mB4Value;
+  struct joyinfoex_tag mJsInfo;
+  afx_msg void OnTimer(UINT_PTR nIDEvent);
+  int js2kbActive();
+  CString mStatus;
 };
