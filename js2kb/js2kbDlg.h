@@ -4,8 +4,11 @@
 
 #pragma once
 
+#include "map"
 #include "mmsystem.h"
 #pragma comment(lib, "winmm.lib")
+
+using namespace std;
 
 // Cjs2kbDlg ¶Ô»°¿ò
 class Cjs2kbDlg : public CDialogEx
@@ -63,4 +66,5 @@ public:
   afx_msg void OnTimer(UINT_PTR nIDEvent);
   int js2kbActive();
   CString mStatus;
+  map<CString, int> mKb2int;
 };

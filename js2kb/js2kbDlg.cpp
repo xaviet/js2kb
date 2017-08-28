@@ -15,7 +15,6 @@
 // Cjs2kbDlg ¶Ô»°¿ò
 
 
-
 Cjs2kbDlg::Cjs2kbDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_JS2KB_DIALOG, pParent)
   , mL2(FALSE)
@@ -124,6 +123,43 @@ BOOL Cjs2kbDlg::OnInitDialog()
   mB4Value = _T("J");
   UpdateData(FALSE);
 
+  mKb2int[_T("A")] = 65;
+  mKb2int[_T("B")] = 66;
+  mKb2int[_T("C")] = 67;
+  mKb2int[_T("D")] = 68;
+  mKb2int[_T("E")] = 69;
+  mKb2int[_T("F")] = 70;
+  mKb2int[_T("G")] = 71;
+  mKb2int[_T("H")] = 72;
+  mKb2int[_T("I")] = 73;
+  mKb2int[_T("J")] = 74;
+  mKb2int[_T("K")] = 75;
+  mKb2int[_T("L")] = 76;
+  mKb2int[_T("M")] = 77;
+  mKb2int[_T("N")] = 78;
+  mKb2int[_T("O")] = 79;
+  mKb2int[_T("P")] = 80;
+  mKb2int[_T("Q")] = 81;
+  mKb2int[_T("R")] = 82;
+  mKb2int[_T("S")] = 83;
+  mKb2int[_T("T")] = 84;
+  mKb2int[_T("U")] = 85;
+  mKb2int[_T("V")] = 86;
+  mKb2int[_T("W")] = 87;
+  mKb2int[_T("X")] = 88;
+  mKb2int[_T("Y")] = 89;
+  mKb2int[_T("Z")] = 90;
+  mKb2int[_T("0")] = 48;
+  mKb2int[_T("1")] = 49;
+  mKb2int[_T("2")] = 50;
+  mKb2int[_T("3")] = 51;
+  mKb2int[_T("4")] = 52;
+  mKb2int[_T("5")] = 53;
+  mKb2int[_T("6")] = 54;
+  mKb2int[_T("7")] = 55;
+  mKb2int[_T("8")] = 56;
+  mKb2int[_T("9")] = 57;
+
   JOYCAPS mJsCaps;
   mJsInfo.dwFlags = JOY_RETURNALL;
   if ((joyGetNumDevs() <= 0) || (JOYERR_NOERROR != joyGetDevCaps(JOYSTICKID1, &mJsCaps, sizeof(mJsCaps))))
@@ -180,28 +216,27 @@ int Cjs2kbDlg::js2kbActive()
 
   mB1 = (mJsInfo.dwButtons & 0x1) != 0x0;
   tKbSet = mB1 ? 0 : KEYEVENTF_KEYUP;
-  keybd_event(73, 0, tKbSet, 0);
+  keybd_event(mKb2int[mB1Value], 0, tKbSet, 0);
 
   mB2 = (mJsInfo.dwButtons & 0x2) != 0x0;
   tKbSet = mB2 ? 0 : KEYEVENTF_KEYUP;
-  keybd_event(76, 0, tKbSet, 0);
+  keybd_event(mKb2int[mB2Value], 0, tKbSet, 0);
 
-  int tB3 = (mJsInfo.dwButtons & 0x4) != 0x0;
-  tKbSet = tB3 ? 0 : KEYEVENTF_KEYUP;
-  keybd_event(75, 0, tKbSet, 0);
-  mB3 = tB3;
+  mB3 = (mJsInfo.dwButtons & 0x4) != 0x0;
+  tKbSet = mB3 ? 0 : KEYEVENTF_KEYUP;
+  keybd_event(mKb2int[mB3Value], 0, tKbSet, 0);
 
   mL2 = (mJsInfo.dwButtons & 0x40) != 0x0;
   tKbSet = mL2 ? 0 : KEYEVENTF_KEYUP;
-  keybd_event(82, 0, tKbSet, 0);
+  keybd_event(mKb2int[mL2Value], 0, tKbSet, 0);
 
   mXp = (mJsInfo.dwXpos == 0x0);
   tKbSet = mXp ? 0 : KEYEVENTF_KEYUP;
-  keybd_event(65, 0, tKbSet, 0);
+  keybd_event(mKb2int[mXpValue], 0, tKbSet, 0);
 
   mXn = (mJsInfo.dwXpos == 0xffff);
   tKbSet = mXn ? 0 : KEYEVENTF_KEYUP;
-  keybd_event(68, 0, tKbSet, 0);
+  keybd_event(mKb2int[mXnValue], 0, tKbSet, 0);
 
 /*
   int tYp = (mJsInfo.dwYpos == 0x0);
